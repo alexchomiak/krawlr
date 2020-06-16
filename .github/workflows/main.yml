@@ -3,7 +3,7 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  build-node:
+  build-krawlr:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -12,6 +12,8 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
+    - name: change into krawlr directory
+      run: cd ./krawlr
     - uses: actions/checkout@v1
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
