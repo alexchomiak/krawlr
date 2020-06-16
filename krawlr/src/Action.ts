@@ -9,6 +9,7 @@ import { Crawler, setStateFunction } from './Crawler'
  * @date 2020-06-15
  * @export
  * @interface ActionHandler
+<<<<<<< HEAD
  * @template T type of data returned after action handler executes
  * @template P params for action that may be needed
  */
@@ -30,6 +31,7 @@ export class Action<T, P> {
     private handler: ActionHandler<T, P>
     private route: string
     private parent: Crawler
+
     /**
      *Creates an instance of Action.
      * @author Alex Chomiak

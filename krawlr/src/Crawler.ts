@@ -54,6 +54,7 @@ export class Crawler {
      * @param {Action<any, any>} action
      * @memberof Crawler
      */
+
     public createAction(action: Action<any, any>) {
         if (this.actions.get(action.getRoute()) != undefined) {
             throw new Error('Action already exists with given route!')
