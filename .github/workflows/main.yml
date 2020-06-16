@@ -22,8 +22,9 @@ jobs:
       working-directory: ./krawlr
       run: |
         echo "::set-output name=dir::$(npm config get cache)"
-    - uses: actions/cache@v1
+    - uses: actions/cache@v1 
       with:
+        working-directory: ./krawlr
         path: ${{ steps.npm-cache.outputs.dir }}
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
