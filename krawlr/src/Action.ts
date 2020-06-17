@@ -1,4 +1,6 @@
 import { Request, Response, Router } from 'express'
+import { Page } from 'puppeteer'
+import { Crawler, setStateFunction } from './Crawler'
 
 /**
  * @description Asynchronous Action Handler Function should return a promise of the
@@ -7,11 +9,12 @@ import { Request, Response, Router } from 'express'
  * @date 2020-06-15
  * @export
  * @interface ActionHandler
- * @template T
- * @template P
+<<<<<<< HEAD
+ * @template T type of data returned after action handler executes
+ * @template P params for action that may be needed
  */
 export interface ActionHandler<T, P> {
-    (params: P): Promise<T>
+    (params: P, page: Page, setState: setStateFunction): Promise<T>
 }
 
 /**
@@ -27,6 +30,7 @@ export interface ActionHandler<T, P> {
 export class Action<T, P> {
     private handler: ActionHandler<T, P>
     private route: string
+    private parent: Crawler
 
     /**
      *Creates an instance of Action.
@@ -55,7 +59,11 @@ export class Action<T, P> {
 
             try {
                 // * Get result from handler
-                const result: T = await this.handler(params)
+                const result: T = await this.handler(
+                    params,
+                    await this.parent.newPage(),
+                    this.parent.setState
+                )
 
                 // * Send Result
                 res.send({ result })
@@ -78,5 +86,16 @@ export class Action<T, P> {
      */
     getRoute(): string {
         return this.route
+    }
+
+    /**
+     * @description Set parent Crawler instance for Action
+     * @author Alex Chomiak
+     * @date 2020-06-16
+     * @param {Crawler} parent
+     * @memberof Action
+     */
+    setParent(parent: Crawler) {
+        this.parent = parent
     }
 }
