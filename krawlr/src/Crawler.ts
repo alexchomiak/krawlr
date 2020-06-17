@@ -113,6 +113,13 @@ export class Crawler {
     }
 }
 
+/**
+ * @description setStateFunction that mutates the state of a given Crawler
+ * @author Alex Chomiak
+ * @date 2020-06-16
+ * @export
+ * @interface setStateFunction
+ */
 export interface setStateFunction {
     (key: string, value: any): void
 }
