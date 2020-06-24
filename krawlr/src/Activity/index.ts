@@ -8,37 +8,33 @@ import { DataStore } from '../DataStore'
  * @interface ActivityScheduleInformation
  * @member {number | null} Interval for repeating activity, if null, schedule once
  */
-interface ActivityScheduleInformation {
+export interface ActivityScheduleInformation {
     interval: number | null
+    callback: (data: any) => void
+}
+
+export interface ScheduleEntry extends ActivityScheduleInformation {
     ref: Activity
 }
-
-/**
- * @description
- * @author Alex Chomiak
- * @date 2020-06-23
- * @interface ActivityProps
- */
-interface ActivityProps {
-    lifecycle: LifeCycle
-    schedule: ActivityScheduleInformation
-}
-
 export abstract class Activity {
-    private activitySchedule: ActivityScheduleInformation
+    private activitySchedule: ScheduleEntry
     private lifecycle: LifeCycle
     private parent: Crawler
     private store: DataStore
+    private deliveryData: any[]
 
     constructor(schedule: ActivityScheduleInformation) {
-        this.activitySchedule = schedule
+        let activitySchedule = schedule as ScheduleEntry
+        activitySchedule.ref = this
+        this.activitySchedule = activitySchedule
+        this.deliveryData = []
     }
 
     // * Setup Function that is expected to set parent crawler instance, create activity lifestyle and set the data store used for the activity
     public abstract setup(): void
 
     private validate() {
-        // * Validates setup is done correctly
+        // * Validates setup is done correctly for an Activity
         if (!this.parent) throw new Error('No parent Crawler instance is set. Check setup function')
         if (!this.lifecycle) throw new Error('No Activity LifeCycle defined. Check setup function')
         if (!this.store) throw new Error('No DataStore defined for Activity. Check setup function')
@@ -47,7 +43,7 @@ export abstract class Activity {
     }
 
     // * Getters
-    public getScheduleInformation(): ActivityScheduleInformation {
+    public getScheduleInformation(): ScheduleEntry {
         this.validate()
         return this.activitySchedule
     }
@@ -61,16 +57,36 @@ export abstract class Activity {
         return this.parent
     }
 
+    public getStore(): DataStore {
+        this.validate()
+        return this.store
+    }
+
+    public addDeliveryData(data: any) {
+        this.deliveryData.push(data)
+    }
+
+    public clearDeliveryData(data: any) {
+        this.deliveryData = []
+    }
+
+    public getDeliveryData() {
+        return this.deliveryData
+    }
+
     // * Setters
-    private setParent(parent: Crawler) {
+    public setParent(parent: Crawler) {
+        if (this.parent != undefined) throw new Error('Field already set. Can only be set once.')
         this.parent = parent
     }
 
-    private setLifeCycle(lifecycle: LifeCycle) {
+    public setLifeCycle(lifecycle: LifeCycle) {
+        if (this.lifecycle != undefined) throw new Error('Field already set. Can only be set once.')
         this.lifecycle = lifecycle
     }
 
-    private setStore(store: DataStore) {
+    public setStore(store: DataStore) {
+        if (this.store != undefined) throw new Error('Field already set. Can only be set once.')
         this.store = store
     }
 }

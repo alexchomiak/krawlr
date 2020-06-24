@@ -4,10 +4,11 @@ import { Page, Request, Response } from 'puppeteer'
 import { DOMParser } from './DOMParser'
 import { NetworkAnalyzer } from './NetworkAnalyzer'
 import { NavigationEvent } from './NavigationEvent'
+import { Activity } from '.'
 
-export interface LifeCycleEvent {
-    substance: Actor | DataExtractor<any> | NavigationEvent
-}
+export type LifeCycleEvent = Actor | DataExtractor<any> | NavigationEvent
+
+// * Removes ability to call stimulus and prep stages within LifeCycleEvent Handlers
 
 export class LifeCycle {
     private prepStage: LifeCycleEvent[]
@@ -18,18 +19,29 @@ export class LifeCycle {
     private requestStash: Request[]
     private responseStash: Response[]
 
-    private deliveryData: any[]
-    private baselineData: any[]
+    private parent: Activity
 
-    constructor(prep: LifeCycleEvent[], stimulus: LifeCycleEvent[], page: Page) {
+    constructor(prep: LifeCycleEvent[], stimulus: LifeCycleEvent[], ref: Activity) {
         this.prepStage = prep
         this.stimulusStage = stimulus
-        this.page = page
-
-        // TODO: Install page middlewares for outgoing request/response made by page that append to stash
+        this.parent = ref
     }
 
     public async prep() {
+        // * Retrieve page from Crawler instance
+        this.page = await this.parent.getParent().getPage()
+
+        // * Install page middlewares for outgoing request/response made by page that append to stash
+        await this.page.setRequestInterception(true)
+        this.page.on('request', (request: Request) => {
+            this.requestStash.push(request)
+            request.continue()
+        })
+        this.page.on('response', (response: Response) => {
+            if (response.status() < 300 || response.status() > 399)
+                this.responseStash.push(response)
+        })
+
         // * Empty respective stashes
         this.requestStash = []
         this.responseStash = []
@@ -38,31 +50,28 @@ export class LifeCycle {
         for (let i = 0; i < this.prepStage.length; i++) {
             const event = this.prepStage[i]
 
-            switch (event.substance.getType()) {
+            switch (event.getType()) {
                 case 'actor':
                     // * Cast LifeCycle to Actor
-                    const actor = event.substance as Actor
+                    const actor = event as Actor
 
                     // * Call Actor Handler
-                    actor.call(this.page)
+                    await actor.call(this.page)
 
                     // * Stash DOM Data in LifeCycle data stash
                     this.domStash.push(
                         (await this.page.evaluate(() => document.body.innerHTML)) as string
                     )
-
+                    await this.page.waitForNavigation({ waitUntil: 'networkidle2' })
                     break
                 case 'dom-parser':
                     // * Cast LifeCycle to DOMParser
-                    const extractor = event.substance as DOMParser<any>
+                    const extractor = event as DOMParser<any>
 
                     // * For each entry in domStash, call dom extractor
                     for (const body in this.domStash) {
                         // * Call extractor
-                        const data = extractor.call(body, null)
-
-                        // * Append baseline data
-                        if (data) this.baselineData.push(data)
+                        const data = await extractor.call(body, this.parent)
                     }
 
                     // * Empty domStash
@@ -70,49 +79,49 @@ export class LifeCycle {
                     break
                 case 'network-analyzer':
                     // * Cast LifeCycle to NetworkAnalyzer
-                    const analyzer = event.substance as NetworkAnalyzer<any>
+                    const analyzer = event as NetworkAnalyzer<any>
 
                     // * Call analyzer handler
-                    const data = analyzer.call(
+                    const data = await analyzer.call(
                         {
                             requests: this.requestStash,
                             responses: this.responseStash
                         },
-                        null
+                        this.parent
                     )
-
-                    // * Append baseline data
-                    if (data) this.baselineData.push(data)
 
                     // * Empty respective stashes
                     this.requestStash = []
                     this.responseStash = []
 
                     break
-                case 'navigate':
-                    const navigation = event.substance as NavigationEvent
-                    await this.page.goto(navigation.getDestination(), { waitUntil: 'networkidle2' })
+                case 'navigation':
+                    const navigation = event as NavigationEvent
+                    await this.page.goto(navigation.getDestination(), {
+                        waitUntil: 'networkidle2'
+                    })
                     break
             }
         }
     }
 
     public async stimulus() {
+        if (!this.page) throw new Error('prep stage must be called first')
         // * Empty respective stashes
         this.requestStash = []
         this.responseStash = []
         this.domStash = []
 
-        for (let i = 0; i < this.prepStage.length; i++) {
-            const event = this.prepStage[i]
-
-            switch (event.substance.getType()) {
+        for (let i = 0; i < this.stimulusStage.length; i++) {
+            const event = this.stimulusStage[i]
+            console.log(event.getType())
+            switch (event.getType()) {
                 case 'actor':
                     // * Cast LifeCycle to Actor
-                    const actor = event.substance as Actor
+                    const actor = event as Actor
 
                     // * Call Actor Handler
-                    actor.call(this.page)
+                    await actor.call(this.page)
 
                     // * Stash DOM Data in LifeCycle data stash
                     this.domStash.push(
@@ -122,15 +131,15 @@ export class LifeCycle {
                     break
                 case 'dom-parser':
                     // * Cast LifeCycle to DOMParser
-                    const extractor = event.substance as DOMParser<any>
+                    const extractor = event as DOMParser<any>
 
                     // * For each entry in domStash, call dom extractor
                     for (const body in this.domStash) {
                         // * Call extractor
-                        const data = extractor.call(body, null)
+                        const data = await extractor.call(body, this.parent)
 
                         // * Append baseline data
-                        if (data) this.baselineData.push(data)
+                        if (data) this.parent.addDeliveryData(data)
                     }
 
                     // * Empty domStash
@@ -138,30 +147,32 @@ export class LifeCycle {
                     break
                 case 'network-analyzer':
                     // * Cast LifeCycle to NetworkAnalyzer
-                    const analyzer = event.substance as NetworkAnalyzer<any>
+                    const analyzer = event as NetworkAnalyzer<any>
 
                     // * Call analyzer handler
-                    const data = analyzer.call(
+                    const data = await analyzer.call(
                         {
                             requests: this.requestStash,
                             responses: this.responseStash
                         },
-                        null
+                        this.parent
                     )
 
                     // * Append baseline data
-                    if (data) this.baselineData.push(data)
+                    if (data) this.parent.addDeliveryData(data)
 
                     // * Empty respective stashes
                     this.requestStash = []
                     this.responseStash = []
 
                     break
-                case 'navigate':
-                    const navigation = event.substance as NavigationEvent
+                case 'navigation':
+                    const navigation = event as NavigationEvent
                     await this.page.goto(navigation.getDestination(), { waitUntil: 'networkidle2' })
                     break
             }
         }
     }
+
+    public test() {}
 }

@@ -1,10 +1,11 @@
 import { DataExtractor } from './DataExtractor'
 import { DataStore } from '../DataStore'
+import { Activity } from '.'
 /*
     @description DOMParserHandler that takes in DOM string and returns parsed data
     @param data String
 */
-type DOMParserHandler<T> = (data: String, store: DataStore, baseline: any) => T
+type DOMParserHandler<T> = (data: String, ref: Activity) => Promise<T>
 
 export class DOMParser<T> extends DataExtractor<T> {
     /*
@@ -42,8 +43,8 @@ export class DOMParser<T> extends DataExtractor<T> {
      * @returns {T} extractedData
      * @memberof DOMParser
      */
-    public call(data: String, baseline: any) {
-        return this.handler(data, this.store, baseline)
+    public async call(data: String, ref: Activity) {
+        return await this.handler(data, ref)
     }
 
     public getType() {

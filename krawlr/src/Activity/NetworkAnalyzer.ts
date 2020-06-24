@@ -1,13 +1,14 @@
 import { Request, Response } from 'puppeteer'
 import { DataExtractor } from './DataExtractor'
 import { DataStore } from '../DataStore'
+import { Activity } from '.'
 
 interface NetworkAnalyzerData {
     requests: Request[]
     responses: Response[]
 }
 
-type NetworkAnalyzerHandler<T> = (data: NetworkAnalyzerData, store: DataStore, baseline: any) => T
+type NetworkAnalyzerHandler<T> = (data: NetworkAnalyzerData, ref: Activity) => Promise<T>
 
 export class NetworkAnalyzer<T> extends DataExtractor<T> {
     /*
@@ -15,12 +16,7 @@ export class NetworkAnalyzer<T> extends DataExtractor<T> {
         @private
     */
     private handler: NetworkAnalyzerHandler<T>
-
-    /*
-        @property store
-        @private
-    */
-    private store: DataStore
+    private parent: Activity
 
     /**
      *Creates an instance of NetworkAnalyzer.
@@ -30,10 +26,10 @@ export class NetworkAnalyzer<T> extends DataExtractor<T> {
      * @param {DataStore} dataStore
      * @memberof NetworkAnalyzer
      */
-    constructor(handler: NetworkAnalyzerHandler<T>, dataStore: DataStore) {
+    constructor(handler: NetworkAnalyzerHandler<T>, ref: Activity) {
         super()
         this.handler = handler
-        this.store = dataStore
+        this.parent = ref
     }
 
     /**
@@ -44,8 +40,8 @@ export class NetworkAnalyzer<T> extends DataExtractor<T> {
      * @returns {T} extractedData
      * @memberof NetworkAnalyzer
      */
-    public call(data: NetworkAnalyzerData, baseline: any) {
-        return this.handler(data, this.store, baseline) as T
+    public async call(data: NetworkAnalyzerData, ref: Activity): Promise<T> {
+        return (await this.handler(data, ref)) as T
     }
 
     public getType() {
