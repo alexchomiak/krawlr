@@ -2,15 +2,28 @@ import { Crawler } from '.'
 import { Activity } from '../Activity'
 import cron, { ScheduledTask } from 'node-cron'
 
+/**
+ * @description Schedules activities when prompted by parent Crawler instance
+ * @author Alex Chomiak
+ * @date 2020-06-25
+ * @export
+ * @class Scheduler
+ */
 export class Scheduler {
     private parent: Crawler
-    private started: boolean
     private tasks: Map<string, ScheduledTask>
     constructor(ref: Crawler) {
         this.parent = ref
         this.tasks = new Map<string, ScheduledTask>()
     }
 
+    /**
+     * @description Schedules Activity
+     * @author Alex Chomiak
+     * @date 2020-06-25
+     * @param {Activity} activity
+     * @memberof Scheduler
+     */
     public async schedule(activity: Activity) {
         // * Call Prep Stage for Activity
         await activity.getLifeCycle().traverse('prep')
@@ -35,6 +48,13 @@ export class Scheduler {
         }
     }
 
+    /**
+     * @description Destroys a scheduled cron Activity
+     * @author Alex Chomiak
+     * @date 2020-06-25
+     * @param {Activity} activity
+     * @memberof Scheduler
+     */
     public unschedule(activity: Activity) {
         const task = this.tasks.get(activity.getID())
         if (task) {
