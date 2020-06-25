@@ -19,6 +19,7 @@
         "express": "^4.17.1",
         "node-cron": "^2.0.3",
         "puppeteer": "^3.3.0",
+        "typedoc": "^0.17.7",
         "uuid": "^8.2.0"
     },
     "devDependencies": {
