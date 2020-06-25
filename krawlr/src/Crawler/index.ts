@@ -1,26 +1,19 @@
 import { Activity, ActivityScheduleInformation } from '../Activity'
 import puppeteer, { Browser, Page } from 'puppeteer'
+import { Scheduler } from './Scheduler'
 
-interface ClassInterface<T> {
-    new (params: ActivityScheduleInformation): T
-}
-
-type ActivityGenerator = (schedule: ActivityScheduleInformation) => Activity
 export class Crawler {
     private browser: Browser
+    private scheduler: Scheduler
 
     constructor(browser: Browser) {
         this.browser = browser
+        this.scheduler = new Scheduler(this)
     }
 
     public async schedule(activity: Activity) {
         await activity.setup()
-        console.log('Setup Activity')
-        console.log(activity)
-        await activity.getLifeCycle().prep()
-        await activity.getLifeCycle().stimulus()
-        activity.getScheduleInformation().callback(activity.getDeliveryData())
-        return
+        await this.scheduler.schedule(activity)
     }
 
     public async getPage(): Promise<Page> {
