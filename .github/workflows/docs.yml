@@ -10,7 +10,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Get npm cache directory
         id: npm-cache
         run: |
@@ -23,10 +22,8 @@ jobs:
             ${{ runner.os }}-node-
       - name: npm install, build docs
         run: |
-          pushd krawlr
-          npm ci
+          npm i
           npm run docs
-          popd
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
