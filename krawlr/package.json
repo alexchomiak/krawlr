@@ -6,7 +6,8 @@
     "scripts": {
         "test": "echo \"No tests specified\"",
         "tsc": "tsc",
-        "build": "npm run tsc"
+        "build": "npm run tsc",
+        "docs": "typedoc --out docs --mode file src"
     },
     "author": "",
     "license": "ISC",
