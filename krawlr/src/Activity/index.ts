@@ -1,15 +1,18 @@
 import { LifeCycle } from './LifeCycle'
 import { Crawler } from '../Crawler'
 import { DataStore } from '../DataStore'
+import { v4 as uuidv4 } from 'uuid'
+import { Page } from 'puppeteer'
+import cron from 'node-cron'
 /**
  * @description Activity Schedule
  * @author Alex Chomiak
  * @date 2020-06-23
  * @interface ActivityScheduleInformation
- * @member {number | null} Interval for repeating activity, if null, schedule once
+ * @member {string | null} cron for repeating activity, if null, schedule once
  */
 export interface ActivityScheduleInformation {
-    interval: number | null
+    cron: string | null
     callback: (data: any) => void
 }
 
@@ -19,15 +22,21 @@ export interface ScheduleEntry extends ActivityScheduleInformation {
 export abstract class Activity {
     private activitySchedule: ScheduleEntry
     private lifecycle: LifeCycle
-    private parent: Crawler
     private store: DataStore
-    private deliveryData: any[]
+    private id: string
 
-    constructor(schedule: ActivityScheduleInformation) {
+    private page: Page
+    constructor(schedule: ActivityScheduleInformation, store: DataStore, page: Page) {
         let activitySchedule = schedule as ScheduleEntry
         activitySchedule.ref = this
+
+        // * Validate cron string in schedule info
+        cron.validate(schedule.cron)
         this.activitySchedule = activitySchedule
-        this.deliveryData = []
+        this.store = store
+        this.id = uuidv4()
+
+        this.page = page
     }
 
     // * Setup Function that is expected to set parent crawler instance, create activity lifestyle and set the data store used for the activity
@@ -35,7 +44,6 @@ export abstract class Activity {
 
     private validate() {
         // * Validates setup is done correctly for an Activity
-        if (!this.parent) throw new Error('No parent Crawler instance is set. Check setup function')
         if (!this.lifecycle) throw new Error('No Activity LifeCycle defined. Check setup function')
         if (!this.store) throw new Error('No DataStore defined for Activity. Check setup function')
         if (!this.activitySchedule)
@@ -52,32 +60,20 @@ export abstract class Activity {
         return this.lifecycle
     }
 
-    public getParent(): Crawler {
-        this.validate()
-        return this.parent
+    public getPage() {
+        return this.page
     }
 
     public getStore(): DataStore {
-        this.validate()
         return this.store
     }
 
-    public addDeliveryData(data: any) {
-        this.deliveryData.push(data)
-    }
-
-    public clearDeliveryData(data: any) {
-        this.deliveryData = []
-    }
-
-    public getDeliveryData() {
-        return this.deliveryData
-    }
-
-    // * Setters
-    public setParent(parent: Crawler) {
-        if (this.parent != undefined) throw new Error('Field already set. Can only be set once.')
-        this.parent = parent
+    public deliver() {
+        this.validate()
+        const data = this.lifecycle.getDeliveryData()
+        if (data.length > 0) {
+            this.activitySchedule.callback(data)
+        }
     }
 
     public setLifeCycle(lifecycle: LifeCycle) {
@@ -85,8 +81,7 @@ export abstract class Activity {
         this.lifecycle = lifecycle
     }
 
-    public setStore(store: DataStore) {
-        if (this.store != undefined) throw new Error('Field already set. Can only be set once.')
-        this.store = store
+    public getID() {
+        return this.id
     }
 }

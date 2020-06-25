@@ -5,7 +5,16 @@ import { Activity } from '.'
 
 interface NetworkAnalyzerData {
     requests: Request[]
-    responses: Response[]
+    responses: ResponseObject[]
+}
+
+export interface ResponseObject {
+    contentType: string
+    contentLength: number
+    url: string | null
+    body: Object | null
+    raw: Buffer | null
+    text: string | null
 }
 
 type NetworkAnalyzerHandler<T> = (data: NetworkAnalyzerData, ref: Activity) => Promise<T>
