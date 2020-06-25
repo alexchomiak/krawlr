@@ -1,5 +1,5 @@
-# krawlr
+# krawlr (WIP)
 ![Node CI](https://github.com/alexchomiak/krawlr/workflows/Node%20CI/badge.svg)
 
 
-Event driven Web Scraping library
+Event driven Web Scraping library 
