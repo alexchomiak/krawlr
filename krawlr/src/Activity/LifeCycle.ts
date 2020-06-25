@@ -1,32 +1,59 @@
 import { Actor } from './Actor'
 import { DataExtractor } from './DataExtractor'
-import { Page, Request, Response } from 'puppeteer'
+import { Request, Response } from 'puppeteer'
 import { DOMParser } from './DOMParser'
 import { NetworkAnalyzer, ResponseObject } from './NetworkAnalyzer'
 import { NavigationEvent } from './NavigationEvent'
 import { Activity } from '.'
 
-export type LifeCycleEvent = Actor | DataExtractor<any> | NavigationEvent
+/**
+ * @description Units of work for individual parts of LifeCycle stages
+ * @type LifeCycleEvent
+ */
+export type LifeCycleEvent = Actor | DataExtractor | NavigationEvent
 
 // * Removes ability to call stimulus and prep stages within LifeCycleEvent Handlers
 
+/**
+ * @description The LifeCycle is the heart of the activity, it contains the stages of events
+ * that will take place for the desired scraping task
+ * @author Alex Chomiak
+ * @date 2020-06-25
+ * @export
+ * @class LifeCycle
+ */
 export class LifeCycle {
     private prepStage: LifeCycleEvent[]
     private stimulusStage: LifeCycleEvent[]
-
     private domStash: string[]
     private requestStash: Request[]
     private responseStash: ResponseObject[]
     private deliveryData: any[]
-
     private parent: Activity
 
+    /**
+     *Creates an instance of LifeCycle.
+     * @author Alex Chomiak
+     * @date 2020-06-25
+     * @param {LifeCycleEvent[]} prep
+     * @param {LifeCycleEvent[]} stimulus
+     * @param {Activity} ref
+     * @memberof LifeCycle
+     */
     constructor(prep: LifeCycleEvent[], stimulus: LifeCycleEvent[], ref: Activity) {
         this.prepStage = prep
         this.stimulusStage = stimulus
         this.parent = ref
         this.deliveryData = []
     }
+
+    /**
+     * @description traverses provided stage of lifecycle
+     * @author Alex Chomiak
+     * @date 2020-06-25
+     * @param {('prep' | 'stimulus')} stage
+     * @memberof LifeCycle
+     */
     public async traverse(stage: 'prep' | 'stimulus') {
         // * Retrieve page from Activity instance
         const page = await this.parent.getPage()
@@ -93,12 +120,12 @@ export class LifeCycle {
                     break
                 case 'dom-parser':
                     // * Cast LifeCycle to DOMParser
-                    const extractor = event as DOMParser<any>
+                    const extractor = event as DOMParser
 
                     // * For each entry in domStash, call dom extractor
                     for (const body in this.domStash) {
                         // * Call extractor
-                        const data = await extractor.call(body, this.parent)
+                        const data = await extractor.call(body)
                         // * Append data
                         if (data && stage == 'stimulus') this.deliveryData.push(data)
                     }
@@ -108,16 +135,13 @@ export class LifeCycle {
                     break
                 case 'network-analyzer':
                     // * Cast LifeCycle to NetworkAnalyzer
-                    const analyzer = event as NetworkAnalyzer<any>
+                    const analyzer = event as NetworkAnalyzer
 
                     // * Call analyzer handler
-                    const data = await analyzer.call(
-                        {
-                            requests: this.requestStash,
-                            responses: this.responseStash
-                        },
-                        this.parent
-                    )
+                    const data = await analyzer.call({
+                        requests: this.requestStash,
+                        responses: this.responseStash
+                    })
 
                     // * Append baseline data
                     if (data && stage == 'stimulus') this.deliveryData.push(data)
@@ -137,6 +161,13 @@ export class LifeCycle {
         }
     }
 
+    /**
+     * @description Returns delivery data to Activity layer, and clears delivery data upon completion
+     * @author Alex Chomiak
+     * @date 2020-06-25
+     * @returns
+     * @memberof LifeCycle
+     */
     public getDeliveryData() {
         const data = [...this.deliveryData]
         this.deliveryData = []

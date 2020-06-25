@@ -1,5 +1,4 @@
 import { LifeCycle } from './LifeCycle'
-import { Crawler } from '../Crawler'
 import { DataStore } from '../DataStore'
 import { v4 as uuidv4 } from 'uuid'
 import { Page } from 'puppeteer'
@@ -16,20 +15,37 @@ export interface ActivityScheduleInformation {
     callback: (data: any) => void
 }
 
+/**
+ * @description extension of activity schedule which includes activity reference
+ * @author Alex Chomiak
+ * @date 2020-06-25
+ * @export
+ * @interface ScheduleEntry
+ * @extends {ActivityScheduleInformation}
+ */
 export interface ScheduleEntry extends ActivityScheduleInformation {
     ref: Activity
 }
+
 export abstract class Activity {
     private activitySchedule: ScheduleEntry
     private lifecycle: LifeCycle
     private store: DataStore
     private id: string
-
     private page: Page
+
+    /**
+     *Creates an instance of Activity.
+     * @author Alex Chomiak
+     * @date 2020-06-25
+     * @param {ActivityScheduleInformation} schedule
+     * @param {DataStore} store
+     * @param {Page} page
+     * @memberof Activity
+     */
     constructor(schedule: ActivityScheduleInformation, store: DataStore, page: Page) {
         let activitySchedule = schedule as ScheduleEntry
         activitySchedule.ref = this
-
         // * Validate cron string in schedule info
         cron.validate(schedule.cron)
         this.activitySchedule = activitySchedule
@@ -39,35 +55,36 @@ export abstract class Activity {
         this.page = page
     }
 
-    // * Setup Function that is expected to set parent crawler instance, create activity lifestyle and set the data store used for the activity
+    /**
+     * @description Setup Function that is expected to set parent crawler instance,
+     * create activity lifestyle and set the data store used for the activity
+     * @author Alex Chomiak
+     * @date 2020-06-25
+     * @abstract
+     * @memberof Activity
+     */
     public abstract setup(): void
 
+    /**
+     * @description validates setup is done correctly for an Activity
+     * @author Alex Chomiak
+     * @date 2020-06-25
+     * @private
+     * @memberof Activity
+     */
     private validate() {
-        // * Validates setup is done correctly for an Activity
         if (!this.lifecycle) throw new Error('No Activity LifeCycle defined. Check setup function')
         if (!this.store) throw new Error('No DataStore defined for Activity. Check setup function')
         if (!this.activitySchedule)
             throw new Error('No Activity schedule defined. Check Activity initialization')
     }
 
-    // * Getters
-    public getScheduleInformation(): ScheduleEntry {
-        this.validate()
-        return this.activitySchedule
-    }
-    public getLifeCycle(): LifeCycle {
-        this.validate()
-        return this.lifecycle
-    }
-
-    public getPage() {
-        return this.page
-    }
-
-    public getStore(): DataStore {
-        return this.store
-    }
-
+    /**
+     * @description Deliver updated data to activity callback
+     * @author Alex Chomiak
+     * @date 2020-06-25
+     * @memberof Activity
+     */
     public deliver() {
         this.validate()
         const data = this.lifecycle.getDeliveryData()
@@ -76,12 +93,74 @@ export abstract class Activity {
         }
     }
 
+    // * Getters
+
+    /**
+     * @description
+     * @author Alex Chomiak
+     * @date 2020-06-25
+     * @returns {ScheduleEntry}
+     * @memberof Activity
+     */
+    public getScheduleInformation(): ScheduleEntry {
+        this.validate()
+        return this.activitySchedule
+    }
+
+    /**
+     * @description
+     * @author Alex Chomiak
+     * @date 2020-06-25
+     * @returns {LifeCycle}
+     * @memberof Activity
+     */
+    public getLifeCycle(): LifeCycle {
+        this.validate()
+        return this.lifecycle
+    }
+
+    /**
+     * @description
+     * @author Alex Chomiak
+     * @date 2020-06-25
+     * @returns {Page}
+     * @memberof Activity
+     */
+    public getPage(): Page {
+        return this.page
+    }
+
+    /**
+     * @description
+     * @author Alex Chomiak
+     * @date 2020-06-25
+     * @returns {DataStore}
+     * @memberof Activity
+     */
+    public getStore(): DataStore {
+        return this.store
+    }
+
+    /**
+     * @description
+     * @author Alex Chomiak
+     * @date 2020-06-25
+     * @returns {string}
+     * @memberof Activity
+     */
+    public getID(): string {
+        return this.id
+    }
+
+    /**
+     * @description
+     * @author Alex Chomiak
+     * @date 2020-06-25
+     * @param {LifeCycle} lifecycle
+     * @memberof Activity
+     */
     public setLifeCycle(lifecycle: LifeCycle) {
         if (this.lifecycle != undefined) throw new Error('Field already set. Can only be set once.')
         this.lifecycle = lifecycle
-    }
-
-    public getID() {
-        return this.id
     }
 }

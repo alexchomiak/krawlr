@@ -3,11 +3,24 @@ import { DataExtractor } from './DataExtractor'
 import { DataStore } from '../DataStore'
 import { Activity } from '.'
 
+/**
+ * @description Expected data passed into Network Analyzer handler
+ * @author Alex Chomiak
+ * @date 2020-06-25
+ * @interface NetworkAnalyzerData
+ */
 interface NetworkAnalyzerData {
     requests: Request[]
     responses: ResponseObject[]
 }
 
+/**
+ * @description Response interface for responses retrieved by browser
+ * @author Alex Chomiak
+ * @date 2020-06-25
+ * @export
+ * @interface ResponseObject
+ */
 export interface ResponseObject {
     contentType: string
     contentLength: number
@@ -17,14 +30,24 @@ export interface ResponseObject {
     text: string | null
 }
 
-type NetworkAnalyzerHandler<T> = (data: NetworkAnalyzerData, ref: Activity) => Promise<T>
+/**
+ * @description Handler for network analysis/data extraction
+ * @param {NetworkAnalyzerData} data request/response data
+ * @param {Activity} ref reference to activity
+ * @type NetworkAnalyzerHandler
+ */
+type NetworkAnalyzerHandler = (data: NetworkAnalyzerData, ref: Activity) => Promise<any>
 
-export class NetworkAnalyzer<T> extends DataExtractor<T> {
-    /*
-        @property handler
-        @private
-    */
-    private handler: NetworkAnalyzerHandler<T>
+/**
+ * @description Network Analyzer event that parses requests/responses made by browser
+ * @author Alex Chomiak
+ * @date 2020-06-25
+ * @export
+ * @class NetworkAnalyzer
+ * @extends {DataExtractor}
+ */
+export class NetworkAnalyzer extends DataExtractor {
+    private handler: NetworkAnalyzerHandler
     private parent: Activity
 
     /**
@@ -35,7 +58,7 @@ export class NetworkAnalyzer<T> extends DataExtractor<T> {
      * @param {DataStore} dataStore
      * @memberof NetworkAnalyzer
      */
-    constructor(handler: NetworkAnalyzerHandler<T>, ref: Activity) {
+    constructor(handler: NetworkAnalyzerHandler, ref: Activity) {
         super()
         this.handler = handler
         this.parent = ref
@@ -46,13 +69,20 @@ export class NetworkAnalyzer<T> extends DataExtractor<T> {
      * @author Alex Chomiak
      * @date 2020-06-23
      * @param {NetworkAnalyzerData} data
-     * @returns {T} extractedData
+     * @returns extractedData
      * @memberof NetworkAnalyzer
      */
-    public async call(data: NetworkAnalyzerData, ref: Activity): Promise<T> {
-        return (await this.handler(data, ref)) as T
+    public async call(data: NetworkAnalyzerData) {
+        return await this.handler(data, this.parent)
     }
 
+    /**
+     * @description returns event type
+     * @author Alex Chomiak
+     * @date 2020-06-25
+     * @returns { string } type
+     * @memberof NetworkAnalyzer
+     */
     public getType() {
         return 'network-analyzer'
     }
