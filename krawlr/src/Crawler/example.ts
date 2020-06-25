@@ -1,6 +1,6 @@
 import { Crawler } from '.'
 import { Activity } from '../Activity'
-import puppeteer from 'puppeteer'
+import * as puppeteer from 'puppeteer'
 import { DataStore } from '../DataStore'
 import { LifeCycle, LifeCycleEvent } from '../Activity/LifeCycle'
 import { NavigationEvent } from '../Activity/NavigationEvent'

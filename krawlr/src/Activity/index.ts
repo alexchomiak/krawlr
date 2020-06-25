@@ -2,7 +2,7 @@ import { LifeCycle } from './LifeCycle'
 import { DataStore } from '../DataStore'
 import { v4 as uuidv4 } from 'uuid'
 import { Page } from 'puppeteer'
-import cron from 'node-cron'
+import * as cron from 'node-cron'
 /**
  * @description Activity Schedule
  * @author Alex Chomiak

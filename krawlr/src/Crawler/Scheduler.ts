@@ -1,6 +1,6 @@
 import { Crawler } from '.'
 import { Activity } from '../Activity'
-import cron, { ScheduledTask } from 'node-cron'
+import * as cron from 'node-cron'
 
 /**
  * @description Schedules activities when prompted by parent Crawler instance
@@ -11,10 +11,10 @@ import cron, { ScheduledTask } from 'node-cron'
  */
 export class Scheduler {
     private parent: Crawler
-    private tasks: Map<string, ScheduledTask>
+    private tasks: Map<string, cron.ScheduledTask>
     constructor(ref: Crawler) {
         this.parent = ref
-        this.tasks = new Map<string, ScheduledTask>()
+        this.tasks = new Map<string, cron.ScheduledTask>()
     }
 
     /**
