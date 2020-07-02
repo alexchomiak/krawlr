@@ -1,9 +1,7 @@
 {
-  "name": "krawlr",
-  "version": "1.0.1",
+  "name": "krawlr-repo",
+  "version": "1.0.0",
   "description": "An event-driven web scraping library with polling functionality built on top of Puppeteer.",
-  "main": "krawlr/lib/index.js",
-  "types": "krawlr/lib/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "docs": "typedoc --out docs --mode file ./krawlr/src/"
@@ -12,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/alexchomiak/krawlr.git"
   },
-  "author": "",
+  "author": "Alex Chomiak",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/alexchomiak/krawlr/issues"
@@ -24,13 +22,5 @@
     "@types/node-cron": "^2.0.3",
     "@types/puppeteer": "^3.0.0",
     "@types/uuid": "^8.0.0"
-  },
-  "keywords": [
-        "Web Scraping",
-        "Scraping",
-        "Puppeteer",
-        "Crawler",
-        "Krawlr",
-        "Krawlr Library"
-    ]
+  }
 }
