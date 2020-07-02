@@ -44,7 +44,7 @@ export class DOMParser extends DataExtractor {
         this.handler = handler
 
         const defaultOptions: DOMParserOptions = {
-            clearStash: false
+            clearStash: true
         }
 
         if (options) this.options = { ...defaultOptions, ...options }

@@ -72,7 +72,7 @@ export class NetworkAnalyzer extends DataExtractor {
         this.handler = handler
 
         const defaultOptions: NetworkAnalyzerOptions = {
-            clearStash: false
+            clearStash: true
         }
 
         if (options) this.options = { ...defaultOptions, ...options }
