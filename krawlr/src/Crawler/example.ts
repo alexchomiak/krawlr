@@ -1,19 +1,22 @@
 import { Crawler } from '.'
 import { Activity } from '../Activity'
-import * as puppeteer from 'puppeteer'
+import { launch } from 'puppeteer'
 import { DataStore } from '../DataStore'
 import { LifeCycle, LifeCycleEvent } from '../Activity/LifeCycle'
 import { NavigationEvent } from '../Activity/NavigationEvent'
 import { NetworkAnalyzer } from '../Activity/NetworkAnalyzer'
 ;(async () => {
-    const c = new Crawler(await puppeteer.launch({ headless: true }))
+    const c = new Crawler(await launch({ headless: false }))
 
     class TestActivity extends Activity {
         public async setup() {
             const stimulus: LifeCycleEvent[] = []
 
             stimulus.push(
-                new NavigationEvent(`https://twitter.com/${this.getStore().get('username')}`)
+                new NavigationEvent((ref: Activity) => {
+                    const store = ref.getStore()
+                    return `https://twitter.com/${store.get('username')}`
+                })
             )
 
             stimulus.push(
@@ -65,7 +68,7 @@ import { NetworkAnalyzer } from '../Activity/NetworkAnalyzer'
                             store.set('tweets', Object.values(delivery))
                         }
                     }
-                }, this)
+                })
             )
 
             this.setLifeCycle(new LifeCycle([], stimulus, this))

@@ -1,7 +1,16 @@
 import { Request, Response } from 'puppeteer'
 import { DataExtractor } from './DataExtractor'
-import { DataStore } from '../DataStore'
 import { Activity } from '.'
+
+/**
+ * @description Options interface for network analyzer
+ * @author Alex Chomiak
+ * @date 2020-07-01
+ * @interface NetworkAnalyzerOptions
+ */
+export interface NetworkAnalyzerOptions {
+    clearStash?: boolean
+}
 
 /**
  * @description Expected data passed into Network Analyzer handler
@@ -48,20 +57,26 @@ type NetworkAnalyzerHandler = (data: NetworkAnalyzerData, ref: Activity) => Prom
  */
 export class NetworkAnalyzer extends DataExtractor {
     private handler: NetworkAnalyzerHandler
-    private parent: Activity
+    private options: NetworkAnalyzerOptions
 
     /**
      *Creates an instance of NetworkAnalyzer.
      * @author Alex Chomiak
-     * @date 2020-06-23
-     * @param {NetworkAnalyzerHandler<T>} handler
-     * @param {DataStore} dataStore
+     * @date 2020-07-01
+     * @param {NetworkAnalyzerHandler} handler
+     * @param {NetworkAnalyzerOptions} [options]
      * @memberof NetworkAnalyzer
      */
-    constructor(handler: NetworkAnalyzerHandler, ref: Activity) {
+    constructor(handler: NetworkAnalyzerHandler, options?: NetworkAnalyzerOptions) {
         super()
         this.handler = handler
-        this.parent = ref
+
+        const defaultOptions: NetworkAnalyzerOptions = {
+            clearStash: false
+        }
+
+        if (options) this.options = { ...defaultOptions, ...options }
+        else this.options = defaultOptions
     }
 
     /**
@@ -69,11 +84,12 @@ export class NetworkAnalyzer extends DataExtractor {
      * @author Alex Chomiak
      * @date 2020-06-23
      * @param {NetworkAnalyzerData} data
+     * @param {Activity} ref reference to activity
      * @returns extractedData
      * @memberof NetworkAnalyzer
      */
-    public async call(data: NetworkAnalyzerData) {
-        return await this.handler(data, this.parent)
+    public async call(data: NetworkAnalyzerData, ref: Activity) {
+        return await this.handler(data, ref)
     }
 
     /**
@@ -85,5 +101,16 @@ export class NetworkAnalyzer extends DataExtractor {
      */
     public getType() {
         return 'network-analyzer'
+    }
+
+    /**
+     * @description Returns Network Analyzer options object
+     * @author Alex Chomiak
+     * @date 2020-07-01
+     * @returns {NetworkAnalyzerOptions}
+     * @memberof NetworkAnalyzer
+     */
+    public getOptions(): NetworkAnalyzerOptions {
+        return this.options
     }
 }
