@@ -1,3 +1,5 @@
+import { DataStore } from './src/DataStore'
+
 /**
  * LIBRARY IMPORTS FOR ACTIVITY
  */
@@ -24,5 +26,6 @@ export {
     DOMParser,
     DOMParserOptions,
     NavigationEvent,
-    Crawler
+    Crawler,
+    DataStore
 }
