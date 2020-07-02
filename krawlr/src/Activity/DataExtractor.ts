@@ -12,4 +12,5 @@ import { Activity } from '.'
 export abstract class DataExtractor {
     public abstract call(data: any, ref: Activity): Promise<any>
     public abstract getType(): string
+    public abstract getOptions(): any
 }

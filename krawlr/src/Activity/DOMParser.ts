@@ -2,6 +2,16 @@ import { DataExtractor } from './DataExtractor'
 import { Activity } from '.'
 
 /**
+ * @description Options object for DOM Parser
+ * @author Alex Chomiak
+ * @date 2020-07-01
+ * @interface DOMParserOptions
+ */
+export interface DOMParserOptions {
+    clearStash?: boolean
+}
+
+/**
  * @description DOMParserHandler that takes in DOM string and returns parsed data
  * @param {string} data
  * @param {Activity} ref
@@ -19,20 +29,26 @@ type DOMParserHandler = (data: String, ref: Activity) => any
  */
 export class DOMParser extends DataExtractor {
     private handler: DOMParserHandler
-    private parent: Activity
+    private options: DOMParserOptions
 
     /**
      *Creates an instance of DOMParser.
      * @author Alex Chomiak
-     * @date 2020-06-25
+     * @date 2020-07-01
      * @param {DOMParserHandler} handler
-     * @param {Activity} ref
+     * @param {DOMParserOptions} [options]
      * @memberof DOMParser
      */
-    constructor(handler: DOMParserHandler, ref: Activity) {
+    constructor(handler: DOMParserHandler, options?: DOMParserOptions) {
         super()
         this.handler = handler
-        this.parent = ref
+
+        const defaultOptions: DOMParserOptions = {
+            clearStash: false
+        }
+
+        if (options) this.options = { ...defaultOptions, ...options }
+        else this.options = defaultOptions
     }
 
     /**
@@ -40,11 +56,12 @@ export class DOMParser extends DataExtractor {
      * @author Alex Chomiak
      * @date 2020-06-23
      * @param {string} data
+     * @param {Activity} ref reference to activity
      * @returns extractedData
      * @memberof DOMParser
      */
-    public async call(data: String) {
-        return await this.handler(data, this.parent)
+    public async call(data: String, ref: Activity) {
+        return await this.handler(data, ref)
     }
 
     /**
@@ -56,5 +73,16 @@ export class DOMParser extends DataExtractor {
      */
     public getType() {
         return 'dom-parser'
+    }
+
+    /**
+     * @description Return DOMParser options object
+     * @author Alex Chomiak
+     * @date 2020-07-01
+     * @returns {DOMParserOptions}
+     * @memberof DOMParser
+     */
+    public getOptions(): DOMParserOptions {
+        return this.options
     }
 }

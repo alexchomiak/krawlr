@@ -1,3 +1,12 @@
+import { Activity } from '.'
+
+/**
+ * @description Handler that returns string for navigation event
+ * @param {Activity} ref reference to activity
+ * @type NetworkAnalyzerHandler
+ */
+type NavigationEventPathHandler = (ref: Activity) => string
+
 /**
  * @description Navigation lifecycle event
  * @author Alex Chomiak
@@ -6,8 +15,7 @@
  * @class NavigationEvent
  */
 export class NavigationEvent {
-    private destination: string
-
+    private handler: NavigationEventPathHandler
     /**
      *Creates an instance of NavigationEvent.
      * @author Alex Chomiak
@@ -15,8 +23,8 @@ export class NavigationEvent {
      * @param {string} path
      * @memberof NavigationEvent
      */
-    constructor(path: string) {
-        this.destination = path
+    constructor(pathHandler: NavigationEventPathHandler) {
+        this.handler = pathHandler
     }
 
     /**
@@ -26,8 +34,8 @@ export class NavigationEvent {
      * @returns {string} destination
      * @memberof NavigationEvent
      */
-    public getDestination(): string {
-        return this.destination
+    public getDestination(ref: Activity): string {
+        return this.handler(ref)
     }
 
     /**

@@ -125,35 +125,43 @@ export class LifeCycle {
                     // * For each entry in domStash, call dom extractor
                     for (const body in this.domStash) {
                         // * Call extractor
-                        const data = await extractor.call(body)
+                        const data = await extractor.call(body, this.parent)
                         // * Append data
                         if (data && stage == 'stimulus') this.deliveryData.push(data)
                     }
 
                     // * Empty domStash
+                    // TODO: Don't empty the stash
                     this.domStash = []
                     break
                 case 'network-analyzer':
                     // * Cast LifeCycle to NetworkAnalyzer
                     const analyzer = event as NetworkAnalyzer
+                    const options = analyzer.getOptions()
 
                     // * Call analyzer handler
-                    const data = await analyzer.call({
-                        requests: this.requestStash,
-                        responses: this.responseStash
-                    })
+                    const data = await analyzer.call(
+                        {
+                            requests: this.requestStash,
+                            responses: this.responseStash
+                        },
+                        this.parent
+                    )
 
                     // * Append baseline data
                     if (data && stage == 'stimulus') this.deliveryData.push(data)
 
-                    // * Empty respective stashes
-                    this.requestStash = []
-                    this.responseStash = []
+                    if (options.clearStash) {
+                        // * Empty respective stashes
+                        this.requestStash = []
+                        this.responseStash = []
+                    }
 
                     break
+
                 case 'navigation':
                     const navigation = event as NavigationEvent
-                    await page.goto(navigation.getDestination(), {
+                    await page.goto(navigation.getDestination(this.parent), {
                         waitUntil: 'networkidle2'
                     })
                     break
