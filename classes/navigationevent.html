@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>NavigationEvent | crawler</title>
-	<meta name="description" content="Documentation for crawler">
+	<title>NavigationEvent | dont-publish-this</title>
+	<meta name="description" content="Documentation for dont-publish-this">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
 </head>
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="../index.html" class="title">crawler</a>
+					<a href="../index.html" class="title">dont-publish-this</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -104,7 +104,7 @@
 						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="navigationevent.html#destination" class="tsd-kind-icon">destination</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="navigationevent.html#handler" class="tsd-kind-icon">handler</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -123,13 +123,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Navigation<wbr>Event<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="navigationevent.html" class="tsd-signature-type">NavigationEvent</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Navigation<wbr>Event<span class="tsd-signature-symbol">(</span>pathHandler<span class="tsd-signature-symbol">: </span><a href="../globals.html#navigationeventpathhandler" class="tsd-signature-type">NavigationEventPathHandler</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="navigationevent.html" class="tsd-signature-type">NavigationEvent</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/alexchomiak/krawlr/blob/1901bdf/krawlr/src/Activity/NavigationEvent.ts#L9">Activity/NavigationEvent.ts:9</a></li>
+									<li>Defined in <a href="https://github.com/alexchomiak/krawlr/blob/370d510/krawlr/src/Activity/NavigationEvent.ts#L18">Activity/NavigationEvent.ts:18</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -151,7 +151,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>path: <span class="tsd-signature-type">string</span></h5>
+									<h5>pathHandler: <a href="../globals.html#navigationeventpathhandler" class="tsd-signature-type">NavigationEventPathHandler</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="navigationevent.html" class="tsd-signature-type">NavigationEvent</a></h4>
@@ -162,12 +162,12 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a name="destination" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> destination</h3>
-					<div class="tsd-signature tsd-kind-icon">destination<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="handler" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> handler</h3>
+					<div class="tsd-signature tsd-kind-icon">handler<span class="tsd-signature-symbol">:</span> <a href="../globals.html#navigationeventpathhandler" class="tsd-signature-type">NavigationEventPathHandler</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alexchomiak/krawlr/blob/1901bdf/krawlr/src/Activity/NavigationEvent.ts#L9">Activity/NavigationEvent.ts:9</a></li>
+							<li>Defined in <a href="https://github.com/alexchomiak/krawlr/blob/370d510/krawlr/src/Activity/NavigationEvent.ts#L18">Activity/NavigationEvent.ts:18</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -178,13 +178,13 @@
 					<a name="getdestination" class="tsd-anchor"></a>
 					<h3>get<wbr>Destination</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Destination<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Destination<span class="tsd-signature-symbol">(</span>ref<span class="tsd-signature-symbol">: </span><a href="activity.html" class="tsd-signature-type">Activity</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/alexchomiak/krawlr/blob/1901bdf/krawlr/src/Activity/NavigationEvent.ts#L29">Activity/NavigationEvent.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/alexchomiak/krawlr/blob/370d510/krawlr/src/Activity/NavigationEvent.ts#L37">Activity/NavigationEvent.ts:37</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -203,6 +203,12 @@
 									</dd>
 								</dl>
 							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>ref: <a href="activity.html" class="tsd-signature-type">Activity</a></h5>
+								</li>
+							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 							<p>destination</p>
 						</li>
@@ -218,7 +224,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/alexchomiak/krawlr/blob/1901bdf/krawlr/src/Activity/NavigationEvent.ts#L40">Activity/NavigationEvent.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/alexchomiak/krawlr/blob/370d510/krawlr/src/Activity/NavigationEvent.ts#L48">Activity/NavigationEvent.ts:48</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -284,7 +290,7 @@
 								<a href="navigationevent.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="navigationevent.html#destination" class="tsd-kind-icon">destination</a>
+								<a href="navigationevent.html#handler" class="tsd-kind-icon">handler</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="navigationevent.html#getdestination" class="tsd-kind-icon">get<wbr>Destination</a>
@@ -306,7 +312,13 @@
 						<a href="../interfaces/activityscheduleinformation.html" class="tsd-kind-icon">Activity<wbr>Schedule<wbr>Information</a>
 					</li>
 					<li class=" tsd-kind-interface">
+						<a href="../interfaces/domparseroptions.html" class="tsd-kind-icon">DOMParser<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
 						<a href="../interfaces/networkanalyzerdata.html" class="tsd-kind-icon">Network<wbr>Analyzer<wbr>Data</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/networkanalyzeroptions.html" class="tsd-kind-icon">Network<wbr>Analyzer<wbr>Options</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/responseobject.html" class="tsd-kind-icon">Response<wbr>Object</a>
@@ -322,6 +334,9 @@
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="../globals.html#lifecycleevent" class="tsd-kind-icon">Life<wbr>Cycle<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#navigationeventpathhandler" class="tsd-kind-icon">Navigation<wbr>Event<wbr>Path<wbr>Handler</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="../globals.html#networkanalyzerhandler" class="tsd-kind-icon">Network<wbr>Analyzer<wbr>Handler</a>
