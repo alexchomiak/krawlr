@@ -8,7 +8,7 @@ import { LifeCycle, LifeCycleEvent } from './src/Activity/LifeCycle'
 import { NetworkAnalyzer, NetworkAnalyzerOptions } from './src/Activity/NetworkAnalyzer'
 import { DOMParser, DOMParserOptions } from './src/Activity/DOMParser'
 import { NavigationEvent } from './src/Activity/NavigationEvent'
-
+import { Actor } from './src/Activity/Actor'
 /**
  * LIBRARY IMPORTS FOR CRAWLER
  */
@@ -27,5 +27,6 @@ export {
     DOMParserOptions,
     NavigationEvent,
     Crawler,
-    DataStore
+    DataStore,
+    Actor
 }
