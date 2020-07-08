@@ -43,7 +43,12 @@ export abstract class Activity {
      * @param {Page} page
      * @memberof Activity
      */
-    constructor(schedule: ActivityScheduleInformation, store: DataStore, page: Page) {
+    constructor(
+        schedule: ActivityScheduleInformation,
+        store: DataStore,
+        page: Page,
+        params?: Object
+    ) {
         let activitySchedule = schedule as ScheduleEntry
         activitySchedule.ref = this
         // * Validate cron string in schedule info
@@ -53,6 +58,8 @@ export abstract class Activity {
         this.id = uuidv4()
 
         this.page = page
+
+        Object.keys(params).forEach(key => store.set(key, params[key]))
     }
 
     /**

@@ -9,6 +9,7 @@ import { NetworkAnalyzer, NetworkAnalyzerOptions } from './src/Activity/NetworkA
 import { DOMParser, DOMParserOptions } from './src/Activity/DOMParser'
 import { NavigationEvent } from './src/Activity/NavigationEvent'
 import { Actor } from './src/Activity/Actor'
+
 /**
  * LIBRARY IMPORTS FOR CRAWLER
  */
