@@ -108,7 +108,7 @@ export class LifeCycle {
                     const actor = event as Actor
 
                     // * Call Actor Handler
-                    await actor.call(page)
+                    await actor.call(page, this.parent)
 
                     // * Stash DOM Data in LifeCycle data stash
                     this.domStash.push(

@@ -1,4 +1,5 @@
 import { Page } from 'puppeteer'
+import { Activity } from 'index'
 
 /**
  * @description Actor handler type
@@ -6,7 +7,7 @@ import { Page } from 'puppeteer'
  * @returns {Promise<void>}
  * @type ActorHandler
  */
-type ActorHandler = (page: Page) => Promise<void>
+type ActorHandler = (page: Page, ref: Activity) => Promise<void>
 
 /**
  * @description The Actor is an activity life cycle event meant
@@ -39,8 +40,8 @@ export class Actor {
      * @param {Page} page
      * @memberof Actor
      */
-    public async call(page: Page) {
-        await this.handler(page)
+    public async call(page: Page, ref: Activity) {
+        await this.handler(page, ref)
     }
 
     /**
