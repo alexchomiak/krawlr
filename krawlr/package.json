@@ -1,6 +1,6 @@
 {
     "name": "krawlr",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "description": "An event-driven web scraping library with polling functionality built on top of Puppeteer.",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
