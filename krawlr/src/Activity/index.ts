@@ -43,12 +43,7 @@ export abstract class Activity {
      * @param {Page} page
      * @memberof Activity
      */
-    constructor(
-        schedule: ActivityScheduleInformation,
-        store: DataStore,
-        page: Page,
-        params?: Object
-    ) {
+    constructor(schedule: ActivityScheduleInformation, store: DataStore, params?: Object) {
         let activitySchedule = schedule as ScheduleEntry
         activitySchedule.ref = this
         // * Validate cron string in schedule info
@@ -56,8 +51,6 @@ export abstract class Activity {
         this.activitySchedule = activitySchedule
         this.store = store
         this.id = uuidv4()
-
-        this.page = page
 
         Object.keys(params).forEach(key => store.set(key, params[key]))
     }
@@ -161,7 +154,7 @@ export abstract class Activity {
     }
 
     /**
-     * @description
+     * @description Set activity's life cycle
      * @author Alex Chomiak
      * @date 2020-06-25
      * @param {LifeCycle} lifecycle
@@ -170,5 +163,16 @@ export abstract class Activity {
     public setLifeCycle(lifecycle: LifeCycle) {
         if (this.lifecycle != undefined) throw new Error('Field already set. Can only be set once.')
         this.lifecycle = lifecycle
+    }
+
+    /**
+     * @description Set Activities puppeteer page instance
+     * @author Alex Chomiak
+     * @date 2020-07-10
+     * @param {Page} page
+     * @memberof Activity
+     */
+    public setPage(page: Page) {
+        this.page = page
     }
 }

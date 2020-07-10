@@ -33,6 +33,7 @@ export class Crawler {
      * @memberof Crawler
      */
     public async schedule(activity: Activity) {
+        if (!activity.getPage()) activity.setPage(await this.getPage())
         await activity.setup()
         await this.scheduler.schedule(activity)
     }
