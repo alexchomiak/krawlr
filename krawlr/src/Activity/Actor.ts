@@ -1,5 +1,5 @@
 import { Page } from 'puppeteer'
-import { Activity } from 'index'
+import { Activity } from '.'
 
 /**
  * @description Actor handler type
