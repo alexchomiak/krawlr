@@ -114,9 +114,17 @@ export class LifeCycle {
                     this.domStash.push(
                         (await page.evaluate(() => document.body.innerHTML)) as string
                     )
-                    await page.waitForNavigation({
-                        waitUntil: 'networkidle2'
-                    })
+                    try {
+                        await Promise.race([
+                            page.waitForNavigation({
+                                waitUntil: 'networkidle2'
+                            }),
+                            new Promise(res => setTimeout(res, 1000))
+                        ])
+                    } catch (err) {
+                        console.log('NAV Error')
+                    }
+
                     break
                 case 'dom-parser':
                     // * Cast LifeCycle to DOMParser

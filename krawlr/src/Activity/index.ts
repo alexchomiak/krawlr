@@ -96,7 +96,8 @@ export abstract class Activity {
         this.validate()
         const data = this.lifecycle.getDeliveryData()
         if (data.length > 0) {
-            this.activitySchedule.callback(data)
+            if (data.length == 1) this.activitySchedule.callback(data[0])
+            else this.activitySchedule.callback(data)
         }
     }
 
