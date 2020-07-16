@@ -52,7 +52,9 @@ export abstract class Activity {
         this.store = store
         this.id = uuidv4()
 
-        Object.keys(params).forEach(key => store.set(key, params[key]))
+        if (params) {
+            Object.keys(params).forEach(key => store.set(key, params[key]))
+        }
     }
 
     /**
